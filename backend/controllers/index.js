@@ -20,30 +20,9 @@ exports.postTodoItem = (req, res, next) => {
     .catch((err) => res.send(err));
 };
 
-// exports.postEditProduct = (req, res, next) => {
-//   const id = req.body.id;
-//   const title = req.body.title;
-//   const imgUrl = req.body.imgUrl;
-//   const price = req.body.price;
-//   const description = req.body.description;
-
-//   Product.findById(id)
-//     .then(product => {
-//       product.title = title;
-//       product.price = price;
-//       product.imgUrl = imgUrl;
-//       product.description = description;
-
-//       return product.save();
-//     })
-//     .then(() => res.redirect('/'))
-//     .catch(err => console.log(err));
-// };
-
 exports.deleteTodoItem = (req, res, next) => {
-  const { Id } = req.body;
 
-  Todo.findByIdAndDelete(Id)
+  Todo.findByIdAndDelete(req.params.id)
     .then((result) => res.send(result))
     .catch((err) => res.send(err));
 };

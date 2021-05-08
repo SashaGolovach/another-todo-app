@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { IToDoItem } from '../models/to-do-item';
 
 @Component({
@@ -7,36 +8,32 @@ import { IToDoItem } from '../models/to-do-item';
   styleUrls: ['./to-do-list.component.scss']
 })
 export class ToDoListComponent implements OnInit {
-  toDoItems: Array<IToDoItem> = [
-    {
-      Text: 'Create css classes',
-      Id: '1'
-    },
-    {
-      Text: 'Refactor code',
-      Id: '2'
-    },
-    {
-      Text: 'Add http service',
-      Id: '3'
-    }
-  ];
+  baseApiUrl = 'http://127.0.0.1:3000/todo';
+  toDoItems: IToDoItem[] = [];
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+    this.fetchToDoItems();
   }
 
   addToDoItem(name: string) {
-    const item: IToDoItem = {
-      Text: name,
-      Id: '4'
+    const item = {
+      Text: name
     }
-    this.toDoItems.unshift(item);
+    this.http.post(this.baseApiUrl, item).subscribe(res => console.log(res));
+    this.fetchToDoItems();
   }
 
   removeToDoItem(id: string) {
-    this.toDoItems = this.toDoItems.filter(item => item.Id != id);
+    this.http.delete(this.baseApiUrl + '/' + id).subscribe(res => console.log(res));
+    this.fetchToDoItems();
+  }
+
+  fetchToDoItems() {
+    this.http.get<IToDoItem[]>(this.baseApiUrl, { responseType: 'json', observe: 'response' }).subscribe(res => {
+      this.toDoItems = res.body ?? [];
+    });
   }
 
 }
